@@ -1,0 +1,4 @@
+insert into "switch_log" ("id", "switch_node_id", "new_state", "operator", "reason", "switched_at") overriding system value values (1, 106, 'open', 'aswath1', null, '2026-08-29 15:23:03');
+insert into "switch_log" ("id", "switch_node_id", "new_state", "operator", "reason", "switched_at") overriding system value values (2, 117, 'closed', 'aswath1', null, '2026-08-29 15:23:10');
+insert into "switch_log" ("id", "switch_node_id", "new_state", "operator", "reason", "switched_at") overriding system value values (3, 242, 'closed', 'aswath1', null, '2026-08-29 15:23:15');
+insert into "switch_log" ("id", "switch_node_id", "new_state", "operator", "reason", "switched_at") overriding system value values (4, 338, 'closed', 'aswath1', null, '2026-08-29 15:23:20');

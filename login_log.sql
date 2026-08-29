@@ -1,0 +1,2 @@
+insert into "login_log" ("id", "username", "display_name", "ip_address", "login_at") overriding system value values (1, 'aswath1', 'aswath1', '172.26.198.179', '2026-08-29 15:15:34');
+insert into "login_log" ("id", "username", "display_name", "ip_address", "login_at") overriding system value values (2, 'aswath1', 'aswath1', '172.26.198.179', '2026-08-29 15:19:09');

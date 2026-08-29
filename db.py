@@ -55,3 +55,22 @@ def get_connection():
     )
     conn.autocommit = True
     return conn
+
+
+def query(sql, params=None, fetch=True):
+    """Drop-in replacement for the old MySQL-based query() helper.
+    Returns a list of dict rows when fetch=True, or the affected
+    row count when fetch=False (autocommit is already on, so no
+    explicit commit call is needed)."""
+    conn = get_connection()
+    try:
+        cur = conn.cursor()
+        cur.execute(sql, params or ())
+        if fetch:
+            result = cur.fetchall()
+        else:
+            result = cur.rowcount
+        cur.close()
+        return result
+    finally:
+        conn.close()

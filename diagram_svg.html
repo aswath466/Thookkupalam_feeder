@@ -1,0 +1,56 @@
+{# diagram_svg.html : the INSIDE of the <svg> tag only.
+   Rendered both on first page load (via monitor.html/control.html) and by
+   the /diagram_fragment AJAX endpoint.
+   Expects: nodes, edges, colors, feeder_color_by_id, node_by_id,
+   label_offsets, switch_node_state, zone_color
+
+   NOTE: unlike Erattayar (switch = one edge), each Thookkupalam AB switch
+   is its own NODE (type='switch') sitting between two junction nodes,
+   touched by two edges (start->switch, switch->end) both flagged
+   is_switch=1. So edges are drawn as plain lines only - the switch glyph
+   itself is drawn once per switch NODE below, at that node's own x/y,
+   using switch_node_state (closed only if both legs are closed). #}
+
+{% for e in edges %}
+    {% set nA = node_by_id[e.node_a_id] %}
+    {% set nB = node_by_id[e.node_b_id] %}
+    {% if e.id in colors.edge_color %}
+        {% set lineColor = feeder_color_by_id[colors.edge_color[e.id]] %}
+    {% else %}
+        {% set lineColor = "#999999" %}
+    {% endif %}
+
+    <line x1="{{ nA.pos_x }}" y1="{{ nA.pos_y }}" x2="{{ nB.pos_x }}" y2="{{ nB.pos_y }}"
+          stroke="{{ lineColor }}" stroke-width="4" />
+{% endfor %}
+
+{% for n in nodes %}
+    {% if n.id in colors.node_color %}
+        {% set nodeColor = feeder_color_by_id[colors.node_color[n.id]] %}
+    {% else %}
+        {% set nodeColor = "#999999" %}
+    {% endif %}
+
+    {% if n.node_type == "source" %}
+        <rect x="{{ n.pos_x - 14 }}" y="{{ n.pos_y - 14 }}" width="28" height="28"
+              fill="{{ nodeColor }}" stroke="black" stroke-width="2" />
+        <text x="{{ n.pos_x + 18 }}" y="{{ n.pos_y + 4 }}" class="node-label source-label">{{ n.name }}</text>
+
+    {% elif n.node_type == "transformer" %}
+        <circle cx="{{ n.pos_x - 6 }}" cy="{{ n.pos_y }}" r="9" fill="white" stroke="{{ nodeColor }}" stroke-width="2.5" />
+      
+        {% set offset = label_offsets.get(n.id, (14, 4)) %}
+        {% set transformerNoColor = zone_color.get(n.id, nodeColor) %}
+        <text x="{{ n.pos_x + offset[0] }}" y="{{ n.pos_y + offset[1] }}" class="transformer-no-label" style="fill: {{ transformerNoColor }};">{{ n.transformer_no if n.transformer_no is not none else n.id }}</text>
+
+    {% elif n.node_type == "switch" %}
+        {% set isClosed = switch_node_state.get(n.id, 'closed') == 'closed' %}
+        <circle class="switch-dot" data-node-id="{{ n.id }}" cx="{{ n.pos_x }}" cy="{{ n.pos_y }}" r="9"
+                fill="{{ nodeColor if isClosed else 'white' }}"
+                stroke="{{ nodeColor }}" stroke-width="3" />
+        {% set offset = label_offsets.get(n.id, (14, -8)) %}
+        <text x="{{ n.pos_x + offset[0] }}" y="{{ n.pos_y + offset[1] }}" class="switch-label">{{ n.name }} ({{ switch_node_state.get(n.id, 'closed') | upper }})</text>
+    {% endif %}
+    {# plain junction nodes are purely structural for the line-drawing
+       logic - no marker needed on the monitoring screen #}
+{% endfor %}

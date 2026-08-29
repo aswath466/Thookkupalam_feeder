@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thookkupalam Feeder Monitor{% if mode_label %} — {{ mode_label }}{% endif %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>Thookkupalam Section — 11kV Feeder {{ mode_label or 'Monitor' }}</h1>
+        <nav>
+            {% if is_logged_in() %}
+                <a href="/">Monitor</a>
+                {% if session.get('role') == 'controller' %}
+                    <a href="/control">Control</a>
+                {% endif %}
+                <a href="/ledger">Ledger</a>
+                <a href="/history">Switch History</a>
+                <a href="/login_history">Login History</a>
+            {% else %}
+                <a href="/history">Switch History</a>
+                <a href="/register">Register</a>
+            {% endif %}
+        </nav>
+        <div class="header-meta">
+            {% if is_logged_in() %}
+                <span class="logged-in-as">{{ session.get('display_name') }} ({{ session.get('role') }})</span>
+                <a href="/logout">Logout</a>
+            {% else %}
+                <a href="/login">Login</a>
+            {% endif %}
+        </div>
+    </header>
+    {% block content %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<main>
+    <div class="command-box">
+        <h2>Account Approval</h2>
+        <div class="flash {{ 'flash-success' if ok else 'flash-error' }}">
+            {{ message }}
+        </div>
+        {% if ok %}
+            <p class="hint" style="margin-top: 12px;"><a href="{{ url_for('login') }}">Proceed to login</a></p>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}

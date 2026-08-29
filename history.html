@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<main>
+    <h2 class="group-heading">Switch History</h2>
+    {% if not rows %}
+        <div class="command-box"><p>No switching events have been recorded yet.</p></div>
+    {% else %}
+        <table class="status-table">
+            <thead>
+                <tr><th>Time</th><th>Switch</th><th>New State</th><th>Operator</th><th>Reason</th></tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                    <tr>
+                        <td>{{ row.switched_at.strftime('%d-%b-%Y %H:%M') if row.switched_at else '' }}</td>
+                        <td>{{ row.switch_label }}</td>
+                        <td>
+                            <span class="badge {{ 'badge-open' if row.new_state == 'open' else 'badge-closed' }}">
+                                {{ row.new_state | upper }}
+                            </span>
+                        </td>
+                        <td>{{ row.operator or '' }}</td>
+                        <td>{{ row.reason if row.reason else '—' }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</main>
+{% endblock %}

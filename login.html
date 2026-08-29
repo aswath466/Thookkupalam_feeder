@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<main>
+    <div class="command-box">
+        <h2>Operator Login</h2>
+        {% if error %}<div class="flash flash-error">{{ error }}</div>{% endif %}
+        <form method="post" action="{{ url_for('login', redirect=redirect_to) if redirect_to else url_for('login') }}">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required autofocus autocomplete="username">
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required autocomplete="current-password">
+
+            <button type="submit">Log In</button>
+        </form>
+    </div>
+</main>
+{% endblock %}

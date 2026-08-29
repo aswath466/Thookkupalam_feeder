@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<main>
+    <h2 class="group-heading">Transformer Ledger — Actual Capacities</h2>
+    {% if rows %}
+    <table class="status-table">
+        <thead>
+            <tr>
+                <th>Transformer</th>
+                <th>Feeder</th>
+                <th>Capacity (KVA)</th>
+                <th>Remarks</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                <td>{{ row.transformer_name }}</td>
+                <td>{{ row.feeder_name or '—' }}</td>
+                <td>{{ row.capacity_kva or '—' }}</td>
+                <td>{{ row.remarks or '' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="command-box">
+        <p>No ledger entries yet. The <code>ledger</code> table is an empty scaffold — populate it with
+        <code>transformer_node_id</code>, <code>feeder_id</code>, <code>capacity_kva</code> once field
+        survey data (e.g. from Excel, same as Erattayar's <code>apply_feeder_excel.py</code> approach) is available.</p>
+    </div>
+    {% endif %}
+</main>
+{% endblock %}

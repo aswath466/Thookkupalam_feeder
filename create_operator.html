@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<main>
+    <div class="command-box">
+        <h2>Add Operator</h2>
+        {% if error %}<div class="flash flash-error">{{ error }}</div>{% endif %}
+        {% if success %}<div class="flash flash-success">{{ success }}</div>{% endif %}
+        <form method="post" action="{{ url_for('create_operator') }}">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required autocomplete="username">
+
+            <label for="display_name">Display name (optional)</label>
+            <input type="text" id="display_name" name="display_name" placeholder="Shown in switch logs">
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required minlength="6" autocomplete="new-password">
+
+            <label for="role">Access level</label>
+            <select id="role" name="role">
+                <option value="viewer">Viewer (monitoring screen only)</option>
+                <option value="controller">Controller (can operate switches)</option>
+            </select>
+
+            <button type="submit">Create Operator</button>
+        </form>
+        <p class="hint">This page stays open with no login required only while there are zero operator
+        accounts (first-run bootstrap). Once one exists, you'll need to be logged in to reach it.</p>
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block content %}
+<main>
+    {% if err %}<div class="flash flash-error">{{ err }}</div>{% endif %}
+    {% if active_viewers %}
+        <p class="hint">Currently viewing: {{ active_viewers | join(', ') }}</p>
+    {% endif %}
+    <div class="monitor-layout">
+        <div class="diagram-wrapper">
+            <div class="zoom-controls">
+                <button type="button" onclick="zoomDiagram(1.2)">+</button>
+                <button type="button" onclick="zoomDiagram(0.8)">−</button>
+                <button type="button" onclick="resetZoom()">Reset</button>
+            </div>
+            <svg id="diagram" viewBox="-30 -30 {{ image_width }} {{ image_height }}" xmlns="http://www.w3.org/2000/svg">
+                {% include "diagram_svg.html" %}
+            </svg>
+        </div>
+
+        <aside class="legend-panel">
+            <h2>Feeders</h2>
+            <ul class="feeder-key">
+                {% for f in feeders %}
+                    <li>
+                        <svg class="key-icon" width="34" height="16" viewBox="0 0 34 16">
+                            <line x1="0" y1="8" x2="34" y2="8" stroke="{{ f.color_hex }}" stroke-width="4" />
+                        </svg>
+                        {{ f.name }}
+                    </li>
+                {% endfor %}
+                <li>
+                    <svg class="key-icon" width="34" height="16" viewBox="0 0 34 16">
+                        <circle cx="10" cy="8" r="6" fill="none" stroke="#333" stroke-width="2" />
+                        <circle cx="22" cy="8" r="6" fill="none" stroke="#333" stroke-width="2" />
+                    </svg>
+                    Transformer
+                </li>
+                <li>
+                    <svg class="key-icon" width="34" height="16" viewBox="0 0 34 16">
+                        <circle cx="17" cy="8" r="6" fill="#333" stroke="#000" stroke-width="1" />
+                    </svg>
+                    <b>AB</b> Switch (closed / filled)
+                </li>
+            </ul>
+
+            <h2>Live Transformer Grouping</h2>
+            {% for section in legend_sections %}
+                <table class="legend-table">
+                    <caption style="border-left: 6px solid {{ section.color_hex }};">{{ section.feeder_name }}</caption>
+                    <tbody>
+                        {% for n in section.rows %}
+                            <tr>
+                                <td class="t-no">{{ n.transformer_no if n.transformer_no is not none else '' }}</td>
+                                <td class="t-name">{{ n.name }} <span class="t-kva">{{ n.kva or '' }}{% if n.kva %} KVA{% endif %}</span></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endfor %}
+
+            {% if ledger_sections %}
+            <h2>Ledger (Actual Capacities)</h2>
+            {% for section in ledger_sections %}
+                <table class="legend-table">
+                    <caption style="border-left: 6px solid {{ section.color_hex }};">{{ section.feeder_name }}</caption>
+                    <tbody>
+                        {% for row in section.rows %}
+                            <tr>
+                                <td class="t-no" style="color: {{ section.color_hex }};">{{ row.sl_no }}</td>
+                                <td class="t-name" style="color: {{ section.color_hex }};">{{ row.location_name }} <span class="t-kva">{{ row.capacity_kva }} KVA</span></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endfor %}
+            {% endif %}
+        </aside>
+    </div>
+</main>
+
+<script>
+    // Polls /diagram_fragment every 5 seconds and swaps in the fresh SVG
+    // markup. The <svg> element itself (and its viewBox) never changes,
+    // so there's no flicker or reload - just colors/labels updating in
+    // place as switch states change on the host.
+    const REFRESH_MS = 5000;
+    const diagramEl = document.getElementById('diagram');
+    const DEFAULT_ZOOM = 2;   // bump this up/down to change the default size
+    let zoomLevel = DEFAULT_ZOOM;
+    diagramEl.style.transform = `scale(${zoomLevel})`;
+
+    function zoomDiagram(factor) {
+        zoomLevel *= factor;
+        diagramEl.style.transform = `scale(${zoomLevel})`;
+    }
+    function resetZoom() {
+        zoomLevel = DEFAULT_ZOOM;
+        diagramEl.style.transform = `scale(${zoomLevel})`;
+    }
+
+    async function refreshDiagram() {
+        try {
+            const res = await fetch('/diagram_fragment', { cache: 'no-store' });
+            if (!res.ok) return;
+            diagramEl.innerHTML = await res.text();
+        } catch (e) {
+            // network hiccup - just try again next interval
+        }
+    }
+
+    setInterval(refreshDiagram, REFRESH_MS);
+</script>
+{% endblock %}

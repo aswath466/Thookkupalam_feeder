@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block content %}
+<main>
+    {% if err %}<div class="flash flash-error">{{ err }}</div>{% endif %}
+    <div class="monitor-layout">
+        <div class="diagram-wrapper">
+            <div class="zoom-controls">
+                <button type="button" onclick="zoomDiagram(1.2)">+</button>
+                <button type="button" onclick="zoomDiagram(0.8)">−</button>
+                <button type="button" onclick="resetZoom()">Reset</button>
+            </div>
+            <svg id="diagram" viewBox="-30 -30 {{ image_width }} {{ image_height }}" xmlns="http://www.w3.org/2000/svg">
+                {% include "diagram_svg.html" %}
+            </svg>
+        </div>
+
+        <aside class="legend-panel operator-box">
+            <h2>AB Switches ({{ switch_nodes|length }})</h2>
+            <p class="hint">Click a row's button, or click the switch dot directly on the diagram, to toggle it. Both legs of the switch flip together. Closing a switch is blocked if it would feed a transformer from two feeders at once.</p>
+            <label for="reasonText" style="font-size: 13px; font-weight: bold; color: #444;">Reason for change (optional)</label>
+            <input type="text" id="reasonText" placeholder="e.g. maintenance, fault isolation" style="width: 100%; box-sizing: border-box; padding: 6px 8px; margin: 4px 0 12px; border: 1px solid #ccc; border-radius: 4px;">
+            <table class="status-table">
+                <thead>
+                    <tr><th>Switch</th><th>State</th><th></th></tr>
+                </thead>
+                <tbody id="switch-table-body">
+                    {% for n in switch_nodes %}
+                    <tr data-node-id="{{ n.id }}">
+                        <td>{{ n.name }}</td>
+                        <td>
+                            <span class="badge {{ 'badge-closed' if n.state == 'closed' else 'badge-open' }}" data-state-label>
+                                {{ n.state | upper }}
+                            </span>
+                        </td>
+                        <td class="status-action">
+                            <button type="button"
+                                    class="{{ 'btn-close' if n.state == 'open' else 'btn-open' }}"
+                                    onclick="toggleSwitch({{ n.id }})">
+                                {{ 'Close' if n.state == 'open' else 'Open' }}
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </aside>
+    </div>
+</main>
+
+<script>
+    const diagramEl = document.getElementById('diagram');
+    const DEFAULT_ZOOM = 2;   // bump this up/down to change the default size
+    let zoomLevel = DEFAULT_ZOOM;
+    diagramEl.style.transform = `scale(${zoomLevel})`;
+
+    function zoomDiagram(factor) {
+        zoomLevel *= factor;
+        diagramEl.style.transform = `scale(${zoomLevel})`;
+    }
+    function resetZoom() {
+        zoomLevel = DEFAULT_ZOOM;
+        diagramEl.style.transform = `scale(${zoomLevel})`;
+    }
+
+    async function refreshDiagram() {
+        try {
+            const res = await fetch('/diagram_fragment', { cache: 'no-store' });
+            if (!res.ok) return;
+            diagramEl.innerHTML = await res.text();
+            attachSwitchClicks();
+        } catch (e) {
+            // network hiccup - just try again next interval
+        }
+    }
+
+    async function toggleSwitch(nodeId) {
+        try {
+            const reason = document.getElementById('reasonText').value;
+            const body = new URLSearchParams({ reason });
+            const res = await fetch(`/api/toggle_switch/${nodeId}`, { method: 'POST', body });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                alert(data.error || 'Could not toggle switch — see console for details.');
+                console.error(data.error || res.statusText);
+                return;
+            }
+            await refreshDiagram();
+            await refreshTable();
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async function refreshTable() {
+        // Simplest reliable way to keep the table in sync with the DB
+        // after a toggle, without re-templating client-side.
+        const res = await fetch('/control', { cache: 'no-store' });
+        if (!res.ok) return;
+        const html = await res.text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const freshBody = doc.getElementById('switch-table-body');
+        if (freshBody) {
+            document.getElementById('switch-table-body').innerHTML = freshBody.innerHTML;
+        }
+    }
+
+    function attachSwitchClicks() {
+        document.querySelectorAll('.switch-dot').forEach(dot => {
+            dot.onclick = () => toggleSwitch(dot.dataset.nodeId);
+        });
+    }
+
+    attachSwitchClicks();
+    setInterval(refreshDiagram, 5000);
+</script>
+{% endblock %}

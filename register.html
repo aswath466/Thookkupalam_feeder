@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<main>
+    <div class="command-box">
+        <h2>Register as Operator</h2>
+        {% if error %}<div class="flash flash-error">{{ error }}</div>{% endif %}
+
+        {% if success %}
+            <div class="flash flash-success">{{ success }}</div>
+        {% else %}
+            <form method="post" action="{{ url_for('register') }}">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required autocomplete="username">
+
+                <label for="display_name">Display name (optional)</label>
+                <input type="text" id="display_name" name="display_name" placeholder="Shown in switch logs">
+
+                <label for="email">Your email</label>
+                <input type="email" id="email" name="email" required autocomplete="email">
+
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required minlength="6" autocomplete="new-password">
+
+                <label for="confirm_password">Confirm password</label>
+                <input type="password" id="confirm_password" name="confirm_password" required minlength="6" autocomplete="new-password">
+
+                <button type="submit">Register</button>
+            </form>
+            <p class="hint">Your account requires admin approval before you can log in.</p>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}

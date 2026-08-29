@@ -1,0 +1,420 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    margin: 0;
+    color: #222;
+}
+
+header {
+    background: #1f3a5f;
+    color: white;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 20px;
+}
+
+nav a {
+    color: white;
+    margin-left: 16px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+main {
+    padding: 24px;
+}
+
+.status-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.status-table th, .status-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: left;
+}
+
+.status-table th {
+    background: #eef1f5;
+}
+
+.active-feeder {
+    font-weight: bold;
+    color: #1a7a3c;
+}
+
+.badge {
+    background: #1a7a3c;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 13px;
+}
+
+.switch-form {
+    display: flex;
+    gap: 6px;
+}
+
+.switch-form input {
+    padding: 4px 6px;
+    width: 100px;
+}
+
+.switch-form button {
+    background: #1f3a5f;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.switch-form button:hover {
+    background: #16294a;
+}
+
+.command-box {
+    background: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border-radius: 6px;
+    padding: 16px 20px;
+    max-width: 500px;
+    margin-bottom: 20px;
+}
+
+.command-box h2 {
+    margin-top: 0;
+    font-size: 16px;
+}
+
+.command-box form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.command-box label {
+    font-size: 13px;
+    font-weight: bold;
+    color: #444;
+}
+
+.command-box select,
+.command-box input[type="text"],
+.command-box input[type="password"] {
+    padding: 6px 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.command-box button {
+    background: #1f3a5f;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.command-box button:hover {
+    background: #16294a;
+}
+
+.flash {
+    margin: 16px 24px 0;
+    padding: 10px 16px;
+    border-radius: 4px;
+}
+
+.flash-success {
+    background: #d4f5dd;
+    color: #1a7a3c;
+    border: 1px solid #9fe0b3;
+}
+
+.flash-error {
+    background: #fbe0e0;
+    color: #a11;
+    border: 1px solid #f0a0a0;
+}
+
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.swatch {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+}
+
+.swatch-dead {
+    background: #999999;
+}
+
+.monitor-layout {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.diagram-wrapper {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: calc(100vh - 130px);
+    overflow: auto;
+    background: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+.legend-panel {
+    flex: 0 0 320px;
+    max-height: calc(100vh - 130px);
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    padding: 12px 16px;
+}
+
+.legend-panel h2 {
+    margin-top: 0;
+    font-size: 16px;
+    color: #1f3a5f;
+}
+
+.feeder-key {
+    list-style: none;
+    margin: 0 0 18px;
+    padding: 10px 12px;
+    font-size: 13px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fafbfc;
+}
+
+.feeder-key li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 0;
+}
+
+.key-icon {
+    flex: 0 0 auto;
+}
+
+.legend-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 22px;
+    font-size: 14px;
+}
+
+.legend-table caption {
+    text-align: left;
+    font-weight: bold;
+    font-size: 15px;
+    padding: 4px 8px 6px;
+    margin-bottom: 4px;
+    border-bottom: 2px solid #333;
+}
+
+.legend-table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid #ccc;
+    text-align: left;
+    vertical-align: baseline;
+}
+
+.legend-table .t-no {
+    width: 26px;
+    border-right: 1px solid #ccc;
+    color: #111;
+    font-weight: 800;
+    font-size: 15px;
+}
+
+.legend-table .t-name {
+    font-weight: bold;
+    color: #111;
+}
+
+.legend-table .t-kva {
+    font-weight: normal;
+    font-size: 11px;
+    color: #333;
+    white-space: nowrap;
+}
+
+@media (max-width: 1200px) {
+    .monitor-layout {
+        flex-direction: column;
+    }
+    .legend-panel {
+        flex: 1 1 auto;
+        max-height: none;
+        width: 100%;
+    }
+}
+
+#diagram {
+    display: block;
+    width: 200%;
+    height: 200%;
+    min-width: 100%;
+    min-height: 100%;
+    transform-origin: 0 0;
+}
+
+.zoom-controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.zoom-controls button {
+    background: #1f3a5f;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.zoom-controls button:hover {
+    background: #16294a;
+}
+
+.switch-dot {
+    cursor: pointer;
+}
+
+.switch-dot:hover {
+    stroke-width: 4;
+}
+
+.switch-label, .node-label {
+    font-size: 11px;
+    fill: #333;
+    font-family: Arial, sans-serif;
+    paint-order: stroke;
+    stroke: white;
+    stroke-width: 3px;
+    stroke-linejoin: round;
+}
+
+.transformer-no-label {
+    font-size: 16px;
+    font-weight: 800;
+    fill: #111;
+    font-family: Arial, sans-serif;
+    paint-order: stroke;
+    stroke: white;
+    stroke-width: 3.5px;
+    stroke-linejoin: round;
+}
+
+.source-label {
+    font-size: 15px;
+    font-weight: bold;
+    fill: #111;
+}
+
+.badge-open {
+    background: #b71c1c;
+}
+
+.badge-closed {
+    background: #1a7a3c;
+}
+
+.group-heading {
+    margin: 24px 0 8px;
+    font-size: 16px;
+    color: #1f3a5f;
+}
+
+.status-action {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.status-action .switch-form {
+    display: inline;
+}
+
+.status-action button {
+    border: none;
+    color: white;
+    padding: 5px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.status-action .btn-open {
+    background: #1a7a3c;
+}
+
+.status-action .btn-open:hover {
+    background: #145c2d;
+}
+
+.status-action .btn-close {
+    background: #b71c1c;
+}
+
+.status-action .btn-close:hover {
+    background: #8f1414;
+}
+
+.operator-box .hint {
+    font-size: 12px;
+    color: #666;
+    margin-top: 4px;
+}
+
+.login-box {
+    margin: 60px auto 0;
+}
+
+nav .logged-in-as {
+    margin-left: 16px;
+    color: #cdd7e5;
+    font-size: 13px;
+}
